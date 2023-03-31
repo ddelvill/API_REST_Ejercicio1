@@ -1,7 +1,9 @@
 package com.example.controllers;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entities.Cliente;
+import com.example.entities.Mascota;
 import com.example.services.ClienteService;
+import com.example.services.MascotaService;
 
 
 
@@ -27,43 +31,46 @@ public class ClienteController {
    @Autowired
     private ClienteService clienteService;
 
-    @GetMapping
-    public ResponseEntity<List<Cliente>> findAll(@RequestParam(name = "page", required = false) Integer page,
-                                                @RequestParam(name = "size", required = false) Integer size) {
+    @Autowired
+    private MascotaService mascotaService;
 
-        ResponseEntity<List<Cliente>> responseEntity = null;
-        List<Cliente> clientes = new ArrayList<>();
-        Sort sortByNombre = Sort.by("nombre");
+//     @GetMapping
+//     public ResponseEntity<List<Cliente>> findAll(@RequestParam(name = "page", required = false) Integer page,
+//                                                 @RequestParam(name = "size", required = false) Integer size) {
+
+//         ResponseEntity<List<Cliente>> responseEntity = null;
+//         List<Cliente> clientes = new ArrayList<>();
+//         Sort sortByNombre = Sort.by("nombre");
 
 
-        if (page != null && size != null) {
+//         if (page != null && size != null) {
 
-            try {
+//             try {
 
-                Pageable pageable = PageRequest.of(page, size, sortByNombre);
+//                 Pageable pageable = PageRequest.of(page, size, sortByNombre);
     
-                Page<Cliente> clientesPaginados = clienteService.findAll(pageable);
+//                 Page<Cliente> clientesPaginados = clienteService.findAll(pageable);
     
-                clientes = clientesPaginados.getContent();
+//                 clientes = clientesPaginados.getContent();
     
-                responseEntity = new ResponseEntity<List<Cliente>>(clientes, HttpStatus.OK);
+//                 responseEntity = new ResponseEntity<List<Cliente>>(clientes, HttpStatus.OK);
             
-            } catch (Exception e) {
-                responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-             }
+//             } catch (Exception e) {
+//                 responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//              }
 
 
 
-            } else {
-                try {
-                    clientes = clienteService.findAll(sortByNombre);
-                    responseEntity = new ResponseEntity<List<Cliente>>(clientes, HttpStatus.OK);
-                } catch (Exception e) {
-                    responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
+//             } else {
+//                 try {
+//                     clientes = clienteService.findAll(sortByNombre);
+//                     responseEntity = new ResponseEntity<List<Cliente>>(clientes, HttpStatus.OK);
+//                 } catch (Exception e) {
+//                     responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//                 }
 
 
-            }
+//             }
             
 
 
@@ -76,6 +83,57 @@ public class ClienteController {
 
 
 
-    return responseEntity;
-    }    
+//     return responseEntity;
+//     }    
+// }
+
+@GetMapping
+public ResponseEntity<Map<List<Cliente>,List<Mascota>>> findAll(@RequestParam(name = "page", required = false) Integer page,
+                                            @RequestParam(name = "size", required = false) Integer size) {
+
+
+    ResponseEntity<Map<List<Cliente>,List<Mascota>>> responseEntity3 = null;
+
+    List<Cliente> clientes = new ArrayList<>();
+    List<Mascota> mascotas = new ArrayList<>();
+    Sort sortByNombre = Sort.by("nombre");
+
+
+
+
+            Pageable pageable = PageRequest.of(page, size, sortByNombre);
+
+            Page<Cliente> clientesPaginados = clienteService.findAll(pageable);
+
+            Page<Mascota> mascotasPaginadas = mascotaService.findAll(pageable);
+
+            clientes = clientesPaginados.getContent();
+
+            mascotas = mascotasPaginadas.getContent();
+
+            Map<List<Cliente>, List<Mascota>>  clientesMascotas = new LinkedHashMap<>();
+
+            clientesMascotas.put(clientes, mascotas);
+
+            responseEntity3 = new ResponseEntity<Map<List<Cliente>,List<Mascota>>>(clientesMascotas,HttpStatus.OK);
+
+  
+
+
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+return responseEntity3;
+}    
+
 }
