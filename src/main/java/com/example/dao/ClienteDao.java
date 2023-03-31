@@ -12,10 +12,12 @@ import com.example.entities.Cliente;
 
 public interface ClienteDao extends JpaRepository<Cliente, Long>{
     
-    @Query(value = "select c from Cliente c left join fetch c.hotel left join fetch c.mascotas")   
+ //  @Query(value = "select c from Cliente c left join fetch c.hotel left join fetch c.mascotas")
+    @Query(value = "select c from Cliente c left join fetch c.hotel")
     public List<Cliente> findAll(Sort sort);
 
-    @Query(value = "select c from Cliente  c left join fetch c.hotel left join fetch c.mascotas", countQuery = "select count(c) from Cliente c left join c.hotel left join c.mascotas" )
+ //  @Query(value = "select c from Cliente  c left join fetch c.hotel left join fetch c.mascotas", countQuery = "select count(c) from Cliente c left join c.hotel left join c.mascotas" )
+    @Query(value = "select c from Cliente  c left join fetch c.hotel", countQuery = "select count(c) from Cliente c left join c.hotel")
     public Page<Cliente> findAll(Pageable pageable);
 
     @Query(value = "select c from Cliente c left join fetch c.hotel left join fetch c.mascotas where c.id = :id")
