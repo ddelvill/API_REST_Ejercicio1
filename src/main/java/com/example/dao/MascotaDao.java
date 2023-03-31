@@ -13,14 +13,6 @@ import com.example.entities.Mascota;
 public interface MascotaDao extends JpaRepository<Mascota, Long>{
 
 
-     @Query(value = "select m from Mascota m left join fetch m.cliente")
-     public List<Mascota> findAll(Sort sort);
- 
-    @Query(value = "select m from Mascota m left join fetch m.cliente", countQuery = "select count(m) from Mascota m left join m.cliente")
-     public Page<Mascota> findAll(Pageable pageable);
- 
-     @Query(value = "select m from Mascota m left join fetch m.cliente where m.id = :id")
-     public Mascota findById(long id);
  
     
 }

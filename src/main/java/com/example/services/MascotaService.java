@@ -9,10 +9,6 @@ import org.springframework.data.domain.Sort;
 import com.example.entities.Mascota;
 
 public interface MascotaService {
-    public List<Mascota> findAll(Sort sort);
-    public Page<Mascota> findAll(Pageable pageable);
-    public Mascota findById(long id);
-    public Mascota save(Mascota mascota);
-    public void delete(Mascota mascota);
+
     
 }
