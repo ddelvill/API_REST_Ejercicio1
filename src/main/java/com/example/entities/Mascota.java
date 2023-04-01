@@ -31,7 +31,7 @@ public class Mascota {
     private LocalDate fechaNacimiento;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  
+    @JsonIgnore
     private Cliente cliente;
 
 
