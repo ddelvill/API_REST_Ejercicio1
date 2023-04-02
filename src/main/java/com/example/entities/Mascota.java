@@ -30,7 +30,7 @@ public class Mascota {
     private Genero genero;
     private LocalDate fechaNacimiento;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JsonIgnore
     private Cliente cliente;
 

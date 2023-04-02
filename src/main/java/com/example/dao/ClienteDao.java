@@ -12,8 +12,8 @@ import com.example.entities.Cliente;
 
 public interface ClienteDao extends JpaRepository<Cliente, Long>{
     
-   //@Query(value = "select c from Cliente c left join fetch c.hotel left join fetch c.mascotas")
-   @Query(value = "select c from Cliente c left join fetch c.hotel")
+   @Query(value = "select c from Cliente c left join fetch c.hotel left join fetch c.mascotas")
+   //@Query(value = "select c from Cliente c left join fetch c.hotel")
 
    // @Query(value = "delete from telefonos where estudiante_id = :idEstudiante", nativeQuery = true)
 
@@ -21,8 +21,8 @@ public interface ClienteDao extends JpaRepository<Cliente, Long>{
     public List<Cliente> findAll(Sort sort);
 
  //  @Query(value = "select distinct * from cliente  left join hotel on hotel.id = cliente.hotel_id  left join mascota on cliente.id = mascota.cliente_id", nativeQuery = true, countQuery = "select count(c) from Cliente c left join c.hotel left join c.mascotas" )
-  @Query(value = "select c from Cliente c left join fetch c.hotel", countQuery = "select count(c) from Cliente c left join c.hotel")
-  //@Query(value = "select c from Cliente  c left join fetch c.hotel left join fetch c.mascotas", countQuery = "select count(c) from Cliente c left join c.hotel left join c.mascotas")
+ // @Query(value = "select c from Cliente c left join fetch c.hotel", countQuery = "select count(c) from Cliente c left join c.hotel")
+  @Query(value = "select c from Cliente  c left join fetch c.hotel left join fetch c.mascotas", countQuery = "select count(c) from Cliente c left join c.hotel left join c.mascotas")
 
     public Page<Cliente> findAll(Pageable pageable);
 

@@ -46,11 +46,11 @@ public class Cliente implements Serializable {
     private LocalDate fechaAlta;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    
+  
     private Hotel hotel;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "cliente")
-    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, mappedBy = "cliente")
+    //@JsonIgnore
     private List<Mascota> mascotas;
 
 }
