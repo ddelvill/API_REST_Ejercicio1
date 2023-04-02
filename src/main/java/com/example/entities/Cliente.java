@@ -50,7 +50,7 @@ public class Cliente implements Serializable {
     private Hotel hotel;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "cliente")
-  
+    @JsonIgnore
     private List<Mascota> mascotas;
 
 }
