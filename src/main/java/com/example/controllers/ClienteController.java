@@ -29,8 +29,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.entities.Cliente;
+import com.example.entities.Mascota;
 import com.example.models.FileUploadResponse;
 import com.example.services.ClienteService;
+import com.example.services.MascotaService;
 import com.example.utilities.FileDownloadUtil;
 import com.example.utilities.FileUploadUtil;
 
@@ -48,6 +50,9 @@ public class ClienteController {
 
     @Autowired
     private FileDownloadUtil fileDownloadUtil;
+
+    @Autowired
+    private MascotaService mascotaService;
 
     @GetMapping
     public ResponseEntity<List<Cliente>> findAll(@RequestParam(name = "page", required = false) Integer page,
@@ -132,7 +137,8 @@ public class ClienteController {
     @Transactional
     public ResponseEntity<Map<String, Object>> insert(
                             @Valid 
-                            @RequestPart(name = "cliente") Cliente cliente, 
+                            @RequestPart(name = "cliente") Cliente cliente,
+                            @RequestPart(name = "mascotas") List<Mascota> mascotas,
                             BindingResult result,
                             @RequestPart (name = "file") MultipartFile file ) throws IOException {
 
@@ -196,8 +202,17 @@ public class ClienteController {
 
             if (clienteDB != null) {
 
+                if (mascotas.size() != 0) {
+
+                for (Mascota mascota : mascotas) {
+                    mascota.setCliente(clienteDB);
+                    mascotaService.save(mascota);
+                }
+            }
+
                 String mensaje = "El cliente se ha creado correctamente" ;
                 responseAsMap.put("mensaje", mensaje);
+                responseAsMap.put("mascotas", mascotas);
                 responseAsMap.put("cliente", clienteDB);
                 responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.CREATED);
     

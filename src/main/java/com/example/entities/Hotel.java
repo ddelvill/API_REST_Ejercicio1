@@ -36,7 +36,7 @@ public class Hotel implements Serializable{
     private long id;
     private String nombre;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "hotel")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE, mappedBy = "hotel")
     @JsonIgnore
 
     private List<Cliente> clientes;

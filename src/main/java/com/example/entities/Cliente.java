@@ -52,7 +52,7 @@ public class Cliente implements Serializable {
 
     private String imagenCliente;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     //@JsonManagedReference
     private Hotel hotel;
 
