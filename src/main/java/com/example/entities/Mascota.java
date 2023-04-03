@@ -41,7 +41,7 @@ public class Mascota {
     private Genero genero;
     private LocalDate fechaNacimiento;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
     @JsonIgnore
     // @JsonManagedReference
 

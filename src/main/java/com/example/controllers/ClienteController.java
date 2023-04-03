@@ -242,17 +242,23 @@ public class ClienteController {
         return responseEntity;
     }
 
+    
+
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<Map<String, Object>> update(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable(name = "id") Integer id) {
+    public ResponseEntity<Map<String, Object>> update(
+                            @Valid
+                            @RequestPart (name = "cliente") Cliente cliente,
+                            @RequestPart (name = "mascotas") List<Mascota> mascotas,
+                            BindingResult result,
+                            @PathVariable(name = "id") Integer id,
+                            @RequestPart (name = "file") MultipartFile file ) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
-        /** 
-         * Primero debemos comprobar si hay errores en el producto recibido. 
-         */
+
 
          if (result.hasErrors()) {
 
@@ -284,7 +290,25 @@ public class ClienteController {
 
          }
 
-         // Si no hay errores, entonces persistimos el producto. 
+         if(!file.isEmpty()) {
+            String fileCode =  fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+            cliente.setImagenCliente(fileCode + "-" + file.getOriginalFilename());
+
+            // Devolver informacion respecto al file recibido. 
+
+            FileUploadResponse fileUploadResponse = FileUploadResponse
+                .builder()
+                .fileName(fileCode + "-" + file.getOriginalFilename())
+                .downloadURI("/clientes/downloadFile/" + fileCode + "-" + file.getOriginalFilename())
+                .size(file.getSize())
+                .build();
+
+            responseAsMap.put("info de la imagen: ", fileUploadResponse);
+
+
+         }
+
+         // Si no hay errores, entonces persistimos el Cliente.
 
          cliente.setId(id);
          Cliente clienteDB = clienteService.save(cliente);
@@ -293,19 +317,28 @@ public class ClienteController {
 
             if (clienteDB != null) {
 
-                String mensaje = "El producto se ha actualizado correctamente" ;
+                if (mascotas.size() != 0) {
+
+                for (Mascota mascota : mascotas) {
+                    mascota.setCliente(clienteDB);
+                    mascotaService.save(mascota);
+                }
+            }
+
+                String mensaje = "El cliente se ha creado correctamente" ;
                 responseAsMap.put("mensaje", mensaje);
+                responseAsMap.put("mascotas", mascotas);
                 responseAsMap.put("cliente", clienteDB);
                 responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.CREATED);
     
              } else {
 
-                String mensaje = "El cliente no se ha actualizado correctamente" ;
+                String errorMensaje = "El usuario no se ha creado correctamente" ;
 
     
-                responseAsMap.put("mensaje", mensaje);
+                responseAsMap.put("mensaje", errorMensaje);
 
-                responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.BAD_REQUEST );
+                responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR );
     
              }
             

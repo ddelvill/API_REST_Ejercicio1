@@ -56,7 +56,7 @@ public class Cliente implements Serializable {
     //@JsonManagedReference
     private Hotel hotel;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, mappedBy = "cliente")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE ,mappedBy = "cliente")
     //@JsonIgnore
     private List<Mascota> mascotas;
 
