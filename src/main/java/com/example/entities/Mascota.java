@@ -41,12 +41,9 @@ public class Mascota {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
-  //  @JsonManagedReference
-
+    // @JsonManagedReference
 
     private Cliente cliente;
-
-
 
     public enum Raza {
         DOBERMAN, CANICHE, LABRADOR, OTRO
@@ -56,6 +53,4 @@ public class Mascota {
         HEMBRA, MACHO
     }
 
-
-    
 }
