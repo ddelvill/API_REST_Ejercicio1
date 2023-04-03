@@ -62,7 +62,7 @@ public class ClienteController {
                     clientes = clienteService.findAll(sortByNombre);
                     responseEntity = new ResponseEntity<List<Cliente>>(clientes, HttpStatus.OK);
                 } catch (Exception e) {
-                    responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                    responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 }
 
 
