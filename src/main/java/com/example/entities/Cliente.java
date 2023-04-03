@@ -45,7 +45,7 @@ public class Cliente implements Serializable {
     @Past
     private LocalDate fechaAlta;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     
     private Hotel hotel;
 
