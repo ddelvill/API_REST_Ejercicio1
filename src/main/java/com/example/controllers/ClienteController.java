@@ -227,6 +227,88 @@ public class ClienteController {
         return responseEntity;
     }
 
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Map<String, Object>> update(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable(name = "id") Integer id) {
+
+        Map<String, Object> responseAsMap = new HashMap<>();
+
+        ResponseEntity<Map<String, Object>> responseEntity = null;
+
+        /** 
+         * Primero debemos comprobar si hay errores en el producto recibido. 
+         */
+
+         if (result.hasErrors()) {
+
+            List<String> errorMessages = new ArrayList<>();
+
+            for( ObjectError error : result.getAllErrors()) {
+
+                errorMessages.add(error.getDefaultMessage());
+
+            }
+
+            // var prueba = result.getAllErrors();
+
+            // prueba.stream().forEach(e -> {
+            //     errorMessages.add(e.getDefaultMessage());
+            // });
+
+
+            responseAsMap.put("errores", errorMessages);
+
+            responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+
+            return responseEntity;
+
+        
+
+
+
+
+         }
+
+         // Si no hay errores, entonces persistimos el producto. 
+
+         cliente.setId(id);
+         Cliente clienteDB = clienteService.save(cliente);
+
+         try {
+
+            if (clienteDB != null) {
+
+                String mensaje = "El producto se ha actualizado correctamente" ;
+                responseAsMap.put("mensaje", mensaje);
+                responseAsMap.put("cliente", clienteDB);
+                responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.CREATED);
+    
+             } else {
+
+                String mensaje = "El cliente no se ha actualizado correctamente" ;
+
+    
+                responseAsMap.put("mensaje", mensaje);
+
+                responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.BAD_REQUEST );
+    
+             }
+            
+         } catch (DataAccessException e) {
+
+            String errorGrave = "Ha tenido lugar un error grave  y, la causa más problable puede ser: " + e.getMostSpecificCause();
+
+           responseAsMap.put("errorGrave", errorGrave);
+
+           responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
+        
+        }
+
+
+
+        return responseEntity;
+    }
+
 
    
 
