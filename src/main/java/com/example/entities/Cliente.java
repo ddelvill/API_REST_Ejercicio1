@@ -50,6 +50,8 @@ public class Cliente implements Serializable {
     @PastOrPresent
     private LocalDate fechaAlta;
 
+    private String imagenCliente;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     //@JsonManagedReference
     private Hotel hotel;
