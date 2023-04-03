@@ -102,6 +102,7 @@ public class ClienteController {
             String successMessage = "Se ha encontrado el cliente con id: " + id + " correctamente";
             responseAsMap.put("mensaje", successMessage);
             responseAsMap.put("cliente", cliente);
+//            responseAsMap.put("mascotas", cliente.getMascotas());
             responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.OK);
             
         } else {
