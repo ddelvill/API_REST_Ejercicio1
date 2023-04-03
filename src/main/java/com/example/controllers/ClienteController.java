@@ -104,7 +104,6 @@ public class ClienteController {
 
         try {
 
-
             Cliente cliente = clienteService.findById(id);
 
             if (cliente != null) {
@@ -133,30 +132,23 @@ public class ClienteController {
         return responseEntity;
     }
 
-
-
-
-
-    @PostMapping( consumes = "multipart/form-data")
+    @PostMapping(consumes = "multipart/form-data")
     @Transactional
     public ResponseEntity<Map<String, Object>> insert(
-                            @Valid 
-                            @RequestPart(name = "cliente") Cliente cliente,
-                            @RequestPart(name = "mascotas") List<Mascota> mascotas,
-                            BindingResult result,
-                            @RequestPart (name = "file") MultipartFile file ) throws IOException {
+            @Valid @RequestPart(name = "cliente") Cliente cliente,
+            @RequestPart(name = "mascotas") List<Mascota> mascotas,
+            BindingResult result,
+            @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
-
-
-         if (result.hasErrors()) {
+        if (result.hasErrors()) {
 
             List<String> errorMessages = new ArrayList<>();
 
-            for( ObjectError error : result.getAllErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
 
                 errorMessages.add(error.getDefaultMessage());
 
@@ -165,110 +157,97 @@ public class ClienteController {
             // var prueba = result.getAllErrors();
 
             // prueba.stream().forEach(e -> {
-            //     errorMessages.add(e.getDefaultMessage());
+            // errorMessages.add(e.getDefaultMessage());
             // });
-
 
             responseAsMap.put("errores", errorMessages);
 
-            responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
             return responseEntity;
 
-        
+        }
 
-
-
-
-         }
-
-         if(!file.isEmpty()) {
-            String fileCode =  fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+        if (!file.isEmpty()) {
+            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
             cliente.setImagenCliente(fileCode + "-" + file.getOriginalFilename());
 
-            // Devolver informacion respecto al file recibido. 
+            // Devolver informacion respecto al file recibido.
 
             FileUploadResponse fileUploadResponse = FileUploadResponse
-                .builder()
-                .fileName(fileCode + "-" + file.getOriginalFilename())
-                .downloadURI("/clientes/downloadFile/" + fileCode + "-" + file.getOriginalFilename())
-                .size(file.getSize())
-                .build();
+                    .builder()
+                    .fileName(fileCode + "-" + file.getOriginalFilename())
+                    .downloadURI("/clientes/downloadFile/" + fileCode + "-" + file.getOriginalFilename())
+                    .size(file.getSize())
+                    .build();
 
             responseAsMap.put("info de la imagen: ", fileUploadResponse);
 
+        }
 
-         }
+        Cliente clienteDB = clienteService.save(cliente);
 
-         Cliente clienteDB = clienteService.save(cliente);
-
-         try {
+        try {
 
             if (clienteDB != null) {
 
                 if (mascotas.size() != 0) {
 
-                for (Mascota mascota : mascotas) {
-                    mascota.setCliente(clienteDB);
-                    mascotaService.save(mascota);
+                    for (Mascota mascota : mascotas) {
+                        mascota.setCliente(clienteDB);
+                        mascotaService.save(mascota);
+                    }
                 }
-            }
 
-                String mensaje = "El cliente se ha creado correctamente" ;
+                String mensaje = "El cliente se ha creado correctamente";
                 responseAsMap.put("mensaje", mensaje);
                 responseAsMap.put("mascotas", mascotas);
                 responseAsMap.put("cliente", clienteDB);
-                responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.CREATED);
-    
-             } else {
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
 
-                String errorMensaje = "El usuario no se ha creado correctamente" ;
+            } else {
 
-    
+                String errorMensaje = "El usuario no se ha creado correctamente";
+
                 responseAsMap.put("mensaje", errorMensaje);
 
-                responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR );
-    
-             }
-            
-         } catch (DataAccessException e) {
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
+                        HttpStatus.INTERNAL_SERVER_ERROR);
 
-            String errorGrave = "Ha tenido lugar un error grave  y, la causa más problable puede ser: " + e.getMostSpecificCause();
+            }
 
-           responseAsMap.put("errorGrave", errorGrave);
+        } catch (DataAccessException e) {
 
-           responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
-        
+            String errorGrave = "Ha tenido lugar un error grave  y, la causa más problable puede ser: "
+                    + e.getMostSpecificCause();
+
+            responseAsMap.put("errorGrave", errorGrave);
+
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
-
-
 
         return responseEntity;
     }
-
-    
 
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<Map<String, Object>> update(
-                            @Valid
-                            @RequestPart (name = "cliente") Cliente cliente,
-                            @RequestPart (name = "mascotas") List<Mascota> mascotas,
-                            BindingResult result,
-                            @PathVariable(name = "id") Integer id,
-                            @RequestPart (name = "file") MultipartFile file ) throws IOException {
+            @Valid @RequestPart(name = "cliente") Cliente cliente,
+            @RequestPart(name = "mascotas") List<Mascota> mascotas,
+            BindingResult result,
+            @PathVariable(name = "id") Integer id,
+            @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
 
         ResponseEntity<Map<String, Object>> responseEntity = null;
 
-
-
-         if (result.hasErrors()) {
+        if (result.hasErrors()) {
 
             List<String> errorMessages = new ArrayList<>();
 
-            for( ObjectError error : result.getAllErrors()) {
+            for (ObjectError error : result.getAllErrors()) {
 
                 errorMessages.add(error.getDefaultMessage());
 
@@ -277,105 +256,90 @@ public class ClienteController {
             // var prueba = result.getAllErrors();
 
             // prueba.stream().forEach(e -> {
-            //     errorMessages.add(e.getDefaultMessage());
+            // errorMessages.add(e.getDefaultMessage());
             // });
-
 
             responseAsMap.put("errores", errorMessages);
 
-            responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.BAD_REQUEST);
 
             return responseEntity;
 
-        
+        }
 
-
-
-
-         }
-
-         if(!file.isEmpty()) {
-            String fileCode =  fileUploadUtil.saveFile(file.getOriginalFilename(), file);
+        if (!file.isEmpty()) {
+            String fileCode = fileUploadUtil.saveFile(file.getOriginalFilename(), file);
             cliente.setImagenCliente(fileCode + "-" + file.getOriginalFilename());
 
-            // Devolver informacion respecto al file recibido. 
+            // Devolver informacion respecto al file recibido.
 
             FileUploadResponse fileUploadResponse = FileUploadResponse
-                .builder()
-                .fileName(fileCode + "-" + file.getOriginalFilename())
-                .downloadURI("/clientes/downloadFile/" + fileCode + "-" + file.getOriginalFilename())
-                .size(file.getSize())
-                .build();
+                    .builder()
+                    .fileName(fileCode + "-" + file.getOriginalFilename())
+                    .downloadURI("/clientes/downloadFile/" + fileCode + "-" + file.getOriginalFilename())
+                    .size(file.getSize())
+                    .build();
 
             responseAsMap.put("info de la imagen: ", fileUploadResponse);
 
+        }
 
-         }
+        // Si no hay errores, entonces persistimos el Cliente.
 
-         // Si no hay errores, entonces persistimos el Cliente.
+        cliente.setId(id);
+        Cliente clienteDB = clienteService.save(cliente);
 
-         cliente.setId(id);
-         Cliente clienteDB = clienteService.save(cliente);
-
-         try {
+        try {
 
             if (clienteDB != null) {
 
                 if (mascotas.size() != 0) {
 
-                for (Mascota mascota : mascotas) {
-                    mascota.setCliente(clienteDB);
-                    mascotaService.save(mascota);
+                    for (Mascota mascota : mascotas) {
+                        mascota.setCliente(clienteDB);
+                        mascotaService.save(mascota);
+                    }
                 }
-            }
 
-                String mensaje = "El cliente se ha creado correctamente" ;
+                String mensaje = "El cliente se ha creado correctamente";
                 responseAsMap.put("mensaje", mensaje);
                 responseAsMap.put("mascotas", mascotas);
                 responseAsMap.put("cliente", clienteDB);
-                responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.CREATED);
-    
-             } else {
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
 
-                String errorMensaje = "El usuario no se ha creado correctamente" ;
+            } else {
 
-    
+                String errorMensaje = "El usuario no se ha creado correctamente";
+
                 responseAsMap.put("mensaje", errorMensaje);
 
-                responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR );
-    
-             }
-            
-         } catch (DataAccessException e) {
+                responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap,
+                        HttpStatus.INTERNAL_SERVER_ERROR);
 
-            String errorGrave = "Ha tenido lugar un error grave  y, la causa más problable puede ser: " + e.getMostSpecificCause();
+            }
 
-           responseAsMap.put("errorGrave", errorGrave);
+        } catch (DataAccessException e) {
 
-           responseEntity = new ResponseEntity<Map<String,Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
-        
+            String errorGrave = "Ha tenido lugar un error grave  y, la causa más problable puede ser: "
+                    + e.getMostSpecificCause();
+
+            responseAsMap.put("errorGrave", errorGrave);
+
+            responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
-
-
 
         return responseEntity;
     }
 
-
-
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<String> delete(@Valid   @PathVariable(name = "id") Integer id) {
-
+    public ResponseEntity<String> delete(@Valid @PathVariable(name = "id") Integer id) {
 
         ResponseEntity<String> responseEntity = null;
         try {
-           
 
             Cliente clienteDelete = clienteService.findById(id);
-
-            
-
 
             if (clienteDelete != null) {
 
@@ -385,10 +349,6 @@ public class ClienteController {
 
                 responseEntity = new ResponseEntity<String>(mensajeOk, HttpStatus.OK);
 
-                              
-
-
-
             } else {
 
                 String mensajeError = "No existe el cliente que quiere borrar.";
@@ -396,25 +356,15 @@ public class ClienteController {
                 responseEntity = new ResponseEntity<String>(mensajeError, HttpStatus.NOT_FOUND);
             }
 
-    
-            
-           } catch (DataAccessException e) {
+        } catch (DataAccessException e) {
             e.getMostSpecificCause();
-              responseEntity = new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
-            
-             }
+            responseEntity = new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 
+        }
 
-       
-    return responseEntity;
-
-
-
-        
-
+        return responseEntity;
 
     }
-
 
     @GetMapping("/downloadFile/{fileCode}")
     public ResponseEntity<?> downloadFile(@PathVariable(name = "fileCode") String fileCode) {
@@ -435,14 +385,10 @@ public class ClienteController {
         String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
 
         return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(contentType))
-        .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-        .body(resource);
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
+                .body(resource);
 
     }
-
-
-
-   
 
 }
