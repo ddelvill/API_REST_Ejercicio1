@@ -199,9 +199,10 @@ public class ClienteController {
                     }
                 }
 
+                clienteDB.setMascotas(mascotas);
+
                 String mensaje = "El cliente se ha creado correctamente";
                 responseAsMap.put("mensaje", mensaje);
-                responseAsMap.put("mascotas", mascotas);
                 responseAsMap.put("cliente", clienteDB);
                 responseEntity = new ResponseEntity<Map<String, Object>>(responseAsMap, HttpStatus.CREATED);
 
