@@ -28,6 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Table(name = "mascotas")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Mascota {
 
     @Id
@@ -41,7 +42,7 @@ public class Mascota {
     private Genero genero;
     private LocalDate fechaNacimiento;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.REFRESH)
     @JsonIgnore
     // @JsonManagedReference
 
