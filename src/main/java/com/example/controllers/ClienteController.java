@@ -136,8 +136,7 @@ public class ClienteController {
     @Transactional
     public ResponseEntity<Map<String, Object>> insert(
             @Valid @RequestPart(name = "cliente") Cliente cliente,
-            @RequestPart(name = "mascotas") List<Mascota> mascotas,
-            BindingResult result,
+             BindingResult result,
             @RequestPart(name = "file") MultipartFile file) throws IOException {
 
         Map<String, Object> responseAsMap = new HashMap<>();
@@ -187,19 +186,35 @@ public class ClienteController {
 
         Cliente clienteDB = clienteService.save(cliente);
 
+    
+
+
+
+
+
+
+
         try {
 
             if (clienteDB != null) {
 
-                if (mascotas.size() != 0) {
+                List<Mascota> mascotas = clienteDB.getMascotas();
 
+                if (mascotas.size() != 0) {
+        
                     for (Mascota mascota : mascotas) {
+                        
                         mascota.setCliente(clienteDB);
                         mascotaService.save(mascota);
+        
+        
                     }
+                
+                    clienteDB.setMascotas(mascotas);
+        
                 }
 
-                clienteDB.setMascotas(mascotas);
+
 
                 String mensaje = "El cliente se ha creado correctamente";
                 responseAsMap.put("mensaje", mensaje);
